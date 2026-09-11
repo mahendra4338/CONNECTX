@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="CONNECTX cooperative-owned service marketplace">
+  <title>CONNECTX — Cooperative Services</title>
+  <link rel="icon" href="/images/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="toast" class="toast" role="status">Booking request created successfully.</div>
+
+  <div id="authGate" class="auth-gate" aria-hidden="false">
+    <div class="auth-shell">
+      <div class="auth-brand">
+        <img src="/images/logo.svg" alt="CONNECTX logo">
+        <span>CONNECTX</span>
+      </div>
+      <div class="auth-copy">
+        <p class="eyebrow">COOPERATIVE SERVICE NETWORK</p>
+        <h1>Trusted local help,<br><em>connected.</em></h1>
+        <p>Book verified workers, support cooperative livelihoods, and manage services from one simple place.</p>
+        <img class="auth-illustration" src="/images/connectx-hero.svg" alt="Illustration of a connected cooperative service network">
+      </div>
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth-view="login" type="button">Log in</button>
+          <button class="auth-tab" data-auth-view="register" type="button">Create account</button>
+          <button class="auth-tab" data-auth-view="forgot" type="button">Forgot password</button>
+        </div>
+        <form id="loginForm" class="auth-form active">
+          <div class="auth-subtitle">Welcome back. Sign in to your CONNECTX account.</div>
+          <div class="method-switch">
+            <button class="method-button active" data-login-method="email" type="button">Email</button>
+            <button class="method-button" data-login-method="phone" type="button">Phone OTP</button>
+          </div>
+          <label>Email<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+          <label class="password-field">Password<div class="password-wrap"><input name="password" type="password" autocomplete="current-password" placeholder="••••••••" required><button class="toggle-password" type="button">Show</button></div></label>
+          <button class="primary-button auth-submit" type="submit">Log in <span>→</span></button>
+        </form>
+
+        <form id="registerForm" class="auth-form">
+          <div class="auth-subtitle">Create a customer or worker account.</div>
+          <label>Full name<input name="fullName" type="text" required placeholder="Your full name"></label>
+          <label>Email<input name="email" type="email" required placeholder="you@example.com"></label>
+          <label>Phone<input name="phone" type="tel" required placeholder="+919876543210"></label>
+          <label>Password<input name="password" type="password" minlength="8" required placeholder="At least 8 characters"></label>
+          <fieldset><legend>Account type</legend>
+            <label class="radio"><input name="role" type="radio" value="customer" checked> Customer</label>
+            <label class="radio"><input name="role" type="radio" value="worker"> Offer services</label>
+          </fieldset>
+          <div class="worker-fields">
+            <label>Skills<select name="skills" multiple size="4">
+              <option>Plumbing</option><option>Electrical & appliance</option><option>Home cleaning</option><option>Carpentry</option><option>Driver on demand</option><option>Painting</option>
+            </select></label>
+            <label>UPI ID<input name="upiId" type="text" placeholder="name@upi"></label>
+            <label>Bank account<input name="bankAccount" type="text"></label>
+            <label>IFSC<input name="ifsc" type="text"></label>
+          </div>
+          <button class="primary-button auth-submit" type="submit">Create account <span>→</span></button>
+        </form>
+
+        <form id="forgotForm" class="auth-form">
+          <div class="auth-subtitle">Enter your email to receive a password reset code.</div>
+          <label>Email<input name="email" type="email" required placeholder="you@example.com"></label>
+          <label>Reset code<input name="resetCode" type="text" inputmode="numeric" maxlength="6" placeholder="Enter reset code"></label>
+          <div class="reset-fields">
+            <label>New password<input name="newPassword" type="password" minlength="8" placeholder="At least 8 characters"></label>
+            <label>Confirm password<input name="confirmPassword" type="password" minlength="8" placeholder="Repeat new password"></label>
+          </div>
+          <button class="primary-button auth-submit" type="submit">Send reset code <span>→</span></button>
+        </form>
+        <div id="authMessage" class="auth-message" aria-live="polite"></div>
+        <p class="demo-note">Demo admin: <strong>admin@connectx.in</strong> / <strong>connectx123</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <header class="topbar">
+    <a class="brand" href="#" data-view="overview">
+      <img src="/images/logo.svg" alt="">
+      <span>CONNECTX</span>
+    </a>
+    <div class="topbar-right">
+      <button id="locationButton" class="location-button" type="button">⌖ <span>Live location</span><small id="locationStatus">Off</small></button>
+      <button class="profile-button" type="button"><span class="profile-avatar">AN</span><span><b id="profileName">Anjali Nair</b><small>Federation admin</small></span>⌄</button>
+    </div>
+  </header>
+
+  <aside class="sidebar">
+    <nav>
+      <p class="nav-label">WORKSPACE</p>
+      <button class="nav-item active" data-view="overview" type="button"><span>⌂</span> Overview</button>
+      <button class="nav-item" data-view="bookings" type="button"><span>▣</span> Bookings <b>3</b></button>
+      <button class="nav-item" data-view="workers" type="button"><span>♙</span> Workers</button>
+      <button class="nav-item" data-view="services" type="button"><span>✦</span> Services</button>
+      <button class="nav-item" data-view="payments" type="button"><span>₹</span> Payments</button>
+      <p class="nav-label second">SUPPORT</p>
+      <button class="nav-item" data-yoyo="Show me all services." type="button"><span>?</span> Ask YOYO</button>
+    </nav>
+    <div class="sidebar-card">
+      <img src="/images/cooperative.svg" alt="">
+      <strong>Cooperative first</strong>
+      <p>Every booking helps local workers build stable livelihoods.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="breadcrumb"><span>Federation</span><b>/</b> Overview</div>
+    <div class="content-wrap">
+      <section class="hero-panel">
+        <div>
+          <p class="eyebrow">SEPTEMBER 2026 · KERALA FEDERATION</p>
+          <h1>Services that work<br><em>for everyone.</em></h1>
+          <p>Connect households with verified cooperative workers and make every service request count.</p>
+          <button id="newBooking" class="primary-button" type="button">＋ New booking</button>
+        </div>
+        <img src="/images/connectx-hero.svg" alt="" class="hero-art">
+      </section>
+
+      <section class="metric-grid">
+        <article class="metric-card"><small>Active workers</small><strong>248</strong><span>↑ 12 this month</span></article>
+        <article class="metric-card"><small>Bookings</small><strong>1,284</strong><span>↑ 18.6% forecast</span></article>
+        <article class="metric-card"><small>Cooperative earnings</small><strong>₹18.6L</strong><span>Paid on schedule</span></article>
+        <article class="metric-card"><small>Average rating</small><strong>4.8 <i>★</i></strong><span>892 verified reviews</span></article>
+      </section>
+
+      <section class="services-strip">
+        <div class="section-heading"><div><p class="eyebrow">FIND HELP</p><h2>All services</h2></div><span>24 services</span></div>
+        <div id="serviceChips" class="service-chips"></div>
+      </section>
+
+      <section class="dashboard-grid single-panel-grid">
+        <article class="panel bookings-panel">
+          <div class="panel-heading"><div><p class="eyebrow">LIVE QUEUE</p><h2>Recent bookings</h2></div><button class="text-button" data-view="bookings" type="button">View all →</button></div>
+          <div class="table-scroll"><table><thead><tr><th>Customer</th><th>Service</th><th>Worker</th><th>Date</th><th>Status</th></tr></thead><tbody id="bookingRows"></tbody></table></div>
+        </article>
+      </section>
+
+      <section class="map-panel">
+        <div class="panel-heading"><div><p class="eyebrow">COOPERATIVE NETWORK</p><h2>Workers near you</h2><p class="panel-subtitle">Verified worker locations across Kerala.</p></div></div>
+        <div id="workerMap" class="worker-map"></div>
+      </section>
+    </div>
+  </main>
+
+  <button id="yoyoOpen" class="yoyo-open" type="button" aria-label="Open YOYO assistant">YOYO</button>
+  <section id="yoyoChat" class="yoyo-chat" aria-hidden="true">
+    <div class="yoyo-chat-head"><div><strong>YOYO</strong><small>Your CONNECTX helper</small></div><button id="yoyoClose" type="button" aria-label="Close">×</button></div>
+    <div id="chatMessages" class="chat-messages"><div class="chat-bubble yoyo-message">Hi! I’m YOYO. Ask me about services, bookings, workers, or prices.</div></div>
+    <form id="chatForm" class="chat-form"><input id="chatInput" autocomplete="off" placeholder="Ask YOYO anything..."><button type="submit">→</button></form>
+  </section>
+
+  <div id="bookingModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head"><div><p class="eyebrow">SERVICE REQUEST</p><h2>New booking</h2></div><button id="closeModal" type="button" aria-label="Close">×</button></div>
+      <form id="bookingForm">
+        <label>Service<select name="service" required>
+          <option value="">Choose a service</option>
+          <option>Electrical & appliance</option><option>Plumbing</option><option>Home cleaning</option><option>Care & companionship</option><option>Carpentry</option><option>Garden maintenance</option><option>Doctor visit</option><option>Nursing support</option><option>Cook & meal prep</option><option>Luggage shifting</option><option>Pest control</option><option>Driver on demand</option><option>AC repair</option><option>Refrigerator repair</option><option>Painting</option><option>Masonry</option><option>Laundry service</option><option>Beauty at home</option><option>Physiotherapy</option><option>Elder care</option><option>Packers & movers</option><option>Vehicle service</option><option>Computer repair</option><option>Security guard</option>
+        </select></label>
+        <div class="form-two"><label>Location<input name="location" required placeholder="Area, street or landmark"></label><label>Date & time<input name="date" type="datetime-local" required></label></div>
+        <label>Customer name<input name="customer" placeholder="Optional"></label>
+        <button class="primary-button" type="submit">Send booking request <span>→</span></button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/app.js"></script>
+</body>
+</html>
