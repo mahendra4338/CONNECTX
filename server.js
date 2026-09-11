@@ -6,6 +6,7 @@ const https = require('https');
 const { URL } = require('url');
 
 const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 const publicDir = path.join(__dirname, 'public');
 
 const users = [
@@ -233,4 +234,4 @@ const server = http.createServer(async (req, res) => {
   } catch (error) { return json(res, 500, { error: error.message }); }
 });
 
-server.listen(PORT, () => console.log(`CONNECTX running at http://localhost:${PORT}`));
+server.listen(PORT, HOST, () => console.log(`CONNECTX running on http://${HOST}:${PORT}`));
